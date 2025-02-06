@@ -1,5 +1,5 @@
 import { connect, createServer } from "node:http2";
-export function register<Config>(config: Config) {
+export function register<Config>(config: Config, port = 3000) {
   console.log("Registering server", config);
   const server = createServer((request, response) => {
     const { headers } = request
@@ -24,8 +24,8 @@ export function register<Config>(config: Config) {
       response.end();
     });
   })
-  server.listen(3000)
-  console.log("Server listening on port 3000");
+  server.listen(port)
+  console.log("Server listening on port ", port);
 }
 
 export function createClient<Config>(connection: string) {
