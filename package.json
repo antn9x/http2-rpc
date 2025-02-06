@@ -1,0 +1,14 @@
+{
+  "name": "http2-rpc",
+  "version": "1.0.0",
+  "description": "HTTP/2-based RPC server and client implementation using TypeScript",
+  "main": "dist/index.ts",
+  "module": "src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
