@@ -2,18 +2,17 @@
   "compilerOptions": {
     "lib": ["es2017"],
     "target": "es5",
-    "allowJs": true,
     "skipLibCheck": true,
+    "declaration": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": false,
-    "forceConsistentCasingInFileNames": true,
     "module": "CommonJS",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": false,
     "outDir": "dist",
-    "noEmit": false
+    "types": ["bun-types"]
   },
   "exclude": ["dist", "tests"]
 }
