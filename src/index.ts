@@ -33,20 +33,22 @@ export function createClient<Config>(connection: string) {
   const obj = new Proxy({}, {
     get: (_, prop: string) => {
       return (...args: any) => {
-        const req = client.request({
-          ":method": "POST",
-          ":path": prop
-        })
-        req.setEncoding('utf8');
-        let data = '';
-        req.on('data', (chunk) => { data += chunk; });
-        req.on('end', () => {
-          console.log(`\n${data}`);
-          // client.close();
+        return new Promise((resolve, reject) => {
+          const req = client.request({
+            ":method": "POST",
+            ":path": prop
+          })
+          req.setEncoding('utf8');
+          let data = '';
+          req.on('data', (chunk) => { data += chunk; });
+          req.on('end', () => {
+            resolve(data);
+            // client.close();
+          });
+          console.log(`send`, args)
+          req.write(JSON.stringify(args))
+          req.end();
         });
-        console.log(`send`, args)
-        req.write(JSON.stringify(args))
-        req.end();
       }
     }
   });
