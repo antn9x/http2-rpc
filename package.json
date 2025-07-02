@@ -1,6 +1,6 @@
 {
   "name": "http2-rpc",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "HTTP/2-based RPC server and client implementation using TypeScript",
   "main": "dist/index.js",
   "module": "src/index.ts",

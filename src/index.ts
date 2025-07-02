@@ -6,9 +6,6 @@ export function register<Config>(config: Config, port = 3030) {
     // const method = headers[':method'];
     const path: any = headers[':path'];
     console.log('HTTP/2 request received', path);
-    // response.setHeader(
-    //   'content-type', 'binary'
-    // );
     let data = '';
     request.setEncoding('utf8');
     request.on('data', (chunk) => { data += chunk; });
@@ -16,7 +13,11 @@ export function register<Config>(config: Config, port = 3030) {
       const json = JSON.parse(data)
       // console.log(json)
       const res = await (config as any)[path](...json)
-      response.write(JSON.stringify(res));
+      response.setHeader(
+        'Content-Type',
+        typeof res === 'string' ? 'text/plain; charset=utf-8' : 'application/json'
+      );
+      response.write(res);
       response.end();
     });
   })
