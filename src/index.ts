@@ -1,31 +1,27 @@
-import { connect, createServer } from "node:http2";
-export function register<Config>(config: Config, port = 3000) {
-  console.log("Registering server", config);
+import { connect, createServer } from 'node:http2';
+export function register<Config>(config: Config, port = 3030) {
+  console.log('Registering server', config);
   const server = createServer((request, response) => {
     const { headers } = request
     // const method = headers[':method'];
     const path: any = headers[':path'];
-    console.log("HTTP/2 request received", path);
-    // ...
+    console.log('HTTP/2 request received', path);
     // response.setHeader(
     //   'content-type', 'binary'
     // );
     let data = '';
-    request.setEncoding("utf8");
+    request.setEncoding('utf8');
     request.on('data', (chunk) => { data += chunk; });
     request.on('end', async () => {
-      // console.log(`\n${data}`);
-      // client.close();
       const json = JSON.parse(data)
-      console.log(json)
-      // console.log(config[path])
+      // console.log(json)
       const res = await (config as any)[path](...json)
       response.write(res);
       response.end();
     });
   })
   server.listen(port)
-  console.log("Server listening on port ", port);
+  console.log('Server listening on port ', port);
 }
 
 export function createClient<Config>(connection: string) {
@@ -35,15 +31,14 @@ export function createClient<Config>(connection: string) {
       return (...args: any) => {
         return new Promise((resolve, reject) => {
           const req = client.request({
-            ":method": "POST",
-            ":path": prop
+            ':method': 'POST',
+            ':path': prop
           })
           req.setEncoding('utf8');
           let data = '';
           req.on('data', (chunk) => { data += chunk; });
           req.on('end', () => {
             resolve(data);
-            // client.close();
           });
           console.log(`send`, args)
           req.write(JSON.stringify(args))

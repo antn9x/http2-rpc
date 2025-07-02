@@ -8,7 +8,7 @@ bun add http2-rpc
 
 To run:
 
-```bash
+```ts
 import { register, createClient } from "http2-rpc";
 
 interface TokenService {
