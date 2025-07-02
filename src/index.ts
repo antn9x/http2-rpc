@@ -5,7 +5,7 @@ export function register<Config>(config: Config, port = 3030) {
     const { headers } = request
     // const method = headers[':method'];
     const path: any = headers[':path'];
-    console.log('HTTP/2 request received', path);
+    // console.log('HTTP/2 request received', path);
     let data = '';
     request.setEncoding('utf8');
     request.on('data', (chunk) => { data += chunk; });
@@ -13,11 +13,12 @@ export function register<Config>(config: Config, port = 3030) {
       const json = JSON.parse(data)
       // console.log(json)
       const res = await (config as any)[path](...json)
+      // console.log('HTTP/2 response', res, typeof res === 'string' ? 'text/plain; charset=utf-8' : 'application/json');
       response.setHeader(
         'Content-Type',
         typeof res === 'string' ? 'text/plain; charset=utf-8' : 'application/json'
       );
-      response.write(res);
+      response.write(JSON.stringify(res))
       response.end();
     });
   })
@@ -37,11 +38,33 @@ export function createClient<Config>(connection: string) {
           })
           req.setEncoding('utf8');
           let data = '';
+          let isJSON = true;
           req.on('data', (chunk) => { data += chunk; });
-          req.on('end', () => {
-            resolve(data);
+          req.on('error', (err) => {
+            console.error('HTTP/2 request error', err);
+            reject(err);
           });
-          console.log(`send`, args)
+          req.on('response', (headers, flags) => {
+            // console.log('HTTP/2 headers received', headers, flags);
+            if (headers['content-type'] && headers['content-type'].includes('application/json')) {
+              isJSON = true;
+            } else {
+              isJSON = false;
+            }
+          });
+          req.on('end', () => {
+            // console.log('HTTP/2 response received', data, req.sentHeaders, req.endAfterHeaders);
+            if (isJSON) {
+              try {
+                resolve(JSON.parse(data));
+              } catch (e) {
+                reject(new Error('Invalid JSON response'));
+              }
+            } else {
+              resolve(data);
+            }
+          });
+          // console.log('send', args);
           req.write(JSON.stringify(args))
           req.end();
         });
