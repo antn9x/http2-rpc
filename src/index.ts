@@ -16,7 +16,7 @@ export function register<Config>(config: Config, port = 3030) {
       const json = JSON.parse(data)
       // console.log(json)
       const res = await (config as any)[path](...json)
-      response.write(res);
+      response.write(JSON.stringify(res));
       response.end();
     });
   })
